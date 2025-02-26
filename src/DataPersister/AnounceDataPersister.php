@@ -26,6 +26,13 @@ class AnounceDataPersister implements ProcessorInterface
             $data->setSeller($this->security->getUser());
         }
 
+        if ($data->getBook() === null) {
+            $book = new Book();
+            $book->setTitle($data->getBook()->getTitle()); // Ajuste selon besoin
+            $this->entityManager->persist($book);
+            $data->setBook($book);
+        }
+
         $this->entityManager->persist($data);
         $this->entityManager->flush();
 
