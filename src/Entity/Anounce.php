@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
+use App\DataPersister\AnounceDataPersister;
 use App\DataPersister\BookDataPersister;
 use App\Repository\AnounceRepository;
 use App\Repository\BookRepository;
@@ -32,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             denormalizationContext: ['groups' => ['anounce:write']],
             security: "is_granted('ROLE_USER')",
-            processor: BookDataPersister::class,
+            processor: AnounceDataPersister::class,
             securityMessage: "Seuls les utilisateurs connectés peuvent créer des livres"
         ),
         new Patch(
@@ -76,9 +77,10 @@ class Anounce
     #[Groups(['anounce:read', 'anounce:write'])]
     private ?Condition $state = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[Groups(['anounce:read', 'anounce:write'])]
+    #[ORM\ManyToOne(inversedBy: 'anounces')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $seller = null;
+
 
     public function getId(): ?int
     {
@@ -156,4 +158,6 @@ class Anounce
 
         return $this;
     }
+
+
 }

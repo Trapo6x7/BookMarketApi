@@ -82,11 +82,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'seller', cascade: ['persist', 'remove'])]
     private ?Order $sale = null;
 
+    /**
+     * @var Collection<int, Anounce>
+     */
+    #[ORM\OneToMany(targetEntity: Anounce::class, mappedBy: 'seller', orphanRemoval: true)]
+    private Collection $anounces;
+
 
 
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->anounces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -285,6 +292,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->sale = $sale;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Anounce>
+     */
+    public function getAnounces(): Collection
+    {
+        return $this->anounces;
+    }
+
+    public function addAnounce(Anounce $anounce): static
+    {
+        if (!$this->anounces->contains($anounce)) {
+            $this->anounces->add($anounce);
+            $anounce->setSeller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnounce(Anounce $anounce): static
+    {
+        if ($this->anounces->removeElement($anounce)) {
+            // set the owning side to null (unless already changed)
+            if ($anounce->getSeller() === $this) {
+                $anounce->setSeller(null);
+            }
+        }
 
         return $this;
     }
