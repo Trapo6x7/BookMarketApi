@@ -76,6 +76,10 @@ class Anounce
     #[Groups(['anounce:read', 'anounce:write'])]
     private ?Condition $state = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(['anounce:read', 'anounce:write'])]
+    private ?User $seller = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -137,6 +141,18 @@ class Anounce
     public function setState(?Condition $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getSeller(): ?User
+    {
+        return $this->seller;
+    }
+
+    public function setSeller(?User $seller): static
+    {
+        $this->seller = $seller;
 
         return $this;
     }
