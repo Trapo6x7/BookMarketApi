@@ -8,7 +8,6 @@ use App\DataPersister\UserDataPersister;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -76,6 +75,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
       #[Groups(['user:write'])]
     private ?string $companyName = null;
+
+    #[ORM\OneToOne(mappedBy: 'buyer', cascade: ['persist', 'remove'])]
+    private ?Order $purchase = null;
+
+    #[ORM\OneToOne(mappedBy: 'seller', cascade: ['persist', 'remove'])]
+    private ?Order $sale = null;
 
 
 
@@ -245,6 +250,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCompanyName(?string $companyName): static
     {
         $this->companyName = $companyName;
+
+        return $this;
+    }
+
+    public function getPurchase(): ?Order
+    {
+        return $this->purchase;
+    }
+
+    public function setPurchase(Order $purchase): static
+    {
+        /** @var Order $purchase */
+        // set the owning side of the relation if necessary
+        if ($purchase->getBuyer() !== $this) {
+            $purchase->setBuyer($this);
+        }
+
+        $this->purchase = $purchase;
+
+        return $this;
+    }
+
+    public function getSale(): ?Order
+    {
+        return $this->sale;
+    }
+
+    public function setSale(Order $sale): static
+    {
+        // set the owning side of the relation if necessary
+        if ($sale->getSeller() !== $this) {
+            $sale->setSeller($this);
+        }
+
+        $this->sale = $sale;
 
         return $this;
     }

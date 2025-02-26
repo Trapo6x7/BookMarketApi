@@ -68,6 +68,9 @@ class Book
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?User $user = null;
 
+    #[ORM\OneToOne(mappedBy: 'book', cascade: ['persist', 'remove'])]
+    private ?Order $sale = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -137,6 +140,23 @@ class Book
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getSale(): ?Order
+    {
+        return $this->sale;
+    }
+
+    public function setSale(Order $sale): static
+    {
+        // set the owning side of the relation if necessary
+        if ($sale->getBook() !== $this) {
+            $sale->setBook($this);
+        }
+
+        $this->sale = $sale;
 
         return $this;
     }
