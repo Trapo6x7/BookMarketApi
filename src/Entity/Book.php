@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             denormalizationContext: ['groups' => ['book:write']],
-            security: "is_granted('ROLE_USER')",
+            security: "is_granted('ROLE_SELLER')",
             processor: BookDataPersister::class,
             securityMessage: "Seuls les utilisateurs connectés peuvent créer des livres"
         ),
