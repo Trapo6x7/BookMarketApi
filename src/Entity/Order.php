@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use App\DataPersister\BookDataPersister;
+use App\DataPersister\OrderDataPersister;
 use App\Repository\BookRepository;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,7 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             denormalizationContext: ['groups' => ['order:write']],
             security: "is_granted('ROLE_USER')",
-            processor: BookDataPersister::class,
+            processor: OrderDataPersister::class,
             securityMessage: "Seuls les utilisateurs connectés peuvent créer des livres"
         ),
         new Patch(
@@ -53,15 +54,6 @@ class Order
     #[Groups(['order:read'])]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'purchase', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write'])]
-    private ?User $buyer = null;
-
-    #[ORM\OneToOne(inversedBy: 'sale', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write'])]
-    private ?User $seller = null;
 
     #[ORM\OneToOne(inversedBy: 'sale', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -72,39 +64,29 @@ class Order
     #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $purchaseAt = null;
 
-    #[ORM\OneToOne(inversedBy: 'sale', cascade: ['persist', 'remove'])]
+
+    #[ORM\ManyToOne(inversedBy: 'orderAsSeller')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['order:read', 'order:write'])]
+    private ?User $seller = null;
+
+    #[ORM\ManyToOne(inversedBy: 'ordersAsBuyer')]
+    #[Groups(['order:read', 'order:write'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $buyer = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sells')]
+    #[Groups(['order:read', 'order:write'])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?OrderState $orderState = null;
+
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getBuyer(): ?User
-    {
-        return $this->buyer;
-    }
-
-    public function setBuyer(User $buyer): static
-    {
-        $this->buyer = $buyer;
-
-        return $this;
-    }
-
-    public function getSeller(): ?User
-    {
-        return $this->seller;
-    }
-
-    public function setSeller(User $seller): static
-    {
-        $this->seller = $seller;
-
-        return $this;
-    }
 
     public function getBook(): ?Book
     {
@@ -130,15 +112,41 @@ class Order
         return $this;
     }
 
+    public function getSeller(): ?User
+    {
+        return $this->seller;
+    }
+
+    public function setSeller(?User $seller): static
+    {
+        $this->seller = $seller;
+
+        return $this;
+    }
+
+    public function getBuyer(): ?User
+    {
+        return $this->buyer;
+    }
+
+    public function setBuyer(?User $buyer): static
+    {
+        $this->buyer = $buyer;
+
+        return $this;
+    }
+
     public function getOrderState(): ?OrderState
     {
         return $this->orderState;
     }
 
-    public function setOrderState(OrderState $orderState): static
+    public function setOrderState(?OrderState $orderState): static
     {
         $this->orderState = $orderState;
 
         return $this;
     }
+
+  
 }

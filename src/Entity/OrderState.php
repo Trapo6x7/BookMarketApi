@@ -18,11 +18,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: OrderStateRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['category:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['category:read']]),
-        new Post(denormalizationContext: ['groups' => ['category:write']]),
-        new Patch(denormalizationContext: ['groups' => ['category:write']]),
-        new Delete(),
+        new Get(
+            normalizationContext: ['groups' => ['order_state:read']],
+            security: "is_granted('PUBLIC_ACCESS')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['order_state:read']],
+            security: "is_granted('PUBLIC_ACCESS')"
+        ),
     ]
 )]
 class OrderState
@@ -30,15 +33,25 @@ class OrderState
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order_state:read'])]
+    #[Groups(['order_state:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['order:read', 'order:write','order_state:read'])]
+    #[Groups(['order_state:read'])]
     private ?string $state = null;
 
-    #[ORM\OneToOne(mappedBy: 'orderState', cascade: ['persist', 'remove'])]
-    private ?Order $sale = null;
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'orderState')]
+    private Collection $sells;
+
+    public function __construct()
+    {
+        $this->sells = new ArrayCollection();
+    }
+
+
 
     public function getId(): ?int
     {
@@ -57,20 +70,34 @@ class OrderState
         return $this;
     }
 
-    public function getSale(): ?Order
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getSells(): Collection
     {
-        return $this->sale;
+        return $this->sells;
     }
 
-    public function setSale(Order $sale): static
+    public function addSell(Order $sell): static
     {
-        // set the owning side of the relation if necessary
-        if ($sale->getOrderState() !== $this) {
-            $sale->setOrderState($this);
+        if (!$this->sells->contains($sell)) {
+            $this->sells->add($sell);
+            $sell->setOrderState($this);
         }
-
-        $this->sale = $sale;
 
         return $this;
     }
+
+    public function removeSell(Order $sell): static
+    {
+        if ($this->sells->removeElement($sell)) {
+            // set the owning side to null (unless already changed)
+            if ($sell->getOrderState() === $this) {
+                $sell->setOrderState(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

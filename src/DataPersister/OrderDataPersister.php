@@ -7,11 +7,12 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Anounce;
 use App\Entity\Book;
+use App\Entity\Order;
 use App\Repository\ConditionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class AnounceDataPersister implements ProcessorInterface
+class OrderDataPersister implements ProcessorInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -19,9 +20,9 @@ class AnounceDataPersister implements ProcessorInterface
         private readonly ConditionRepository $conditionRepository
     ) {}
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Anounce
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Order
     {
-        if ($data instanceof Anounce && $operation instanceof Post) {
+        if ($data instanceof Order && $operation instanceof Post) {
 
             $data->setSeller($this->security->getUser());
         }

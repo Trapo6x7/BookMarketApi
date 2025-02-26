@@ -76,11 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
       #[Groups(['user:write'])]
     private ?string $companyName = null;
 
-    #[ORM\OneToOne(mappedBy: 'buyer', cascade: ['persist', 'remove'])]
-    private ?Order $purchase = null;
-
-    #[ORM\OneToOne(mappedBy: 'seller', cascade: ['persist', 'remove'])]
-    private ?Order $sale = null;
 
     /**
      * @var Collection<int, Anounce>
@@ -88,12 +83,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Anounce::class, mappedBy: 'seller', orphanRemoval: true)]
     private Collection $anounces;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
+    private Collection $orders;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'seller', orphanRemoval: true)]
+    private Collection $orderAsSeller;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
+    private Collection $ordersAsBuyer;
+
 
 
     public function __construct()
     {
         $this->books = new ArrayCollection();
         $this->anounces = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->orderAsSeller = new ArrayCollection();
+        $this->ordersAsBuyer = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -261,40 +277,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPurchase(): ?Order
-    {
-        return $this->purchase;
-    }
 
-    public function setPurchase(Order $purchase): static
-    {
-        /** @var Order $purchase */
-        // set the owning side of the relation if necessary
-        if ($purchase->getBuyer() !== $this) {
-            $purchase->setBuyer($this);
-        }
-
-        $this->purchase = $purchase;
-
-        return $this;
-    }
-
-    public function getSale(): ?Order
-    {
-        return $this->sale;
-    }
-
-    public function setSale(Order $sale): static
-    {
-        // set the owning side of the relation if necessary
-        if ($sale->getSeller() !== $this) {
-            $sale->setSeller($this);
-        }
-
-        $this->sale = $sale;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Anounce>
@@ -320,6 +303,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($anounce->getSeller() === $this) {
                 $anounce->setSeller(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getBuyer() === $this) {
+                $order->setBuyer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrderAsSeller(): Collection
+    {
+        return $this->orderAsSeller;
+    }
+
+    public function addOrderAsSeller(Order $orderAsSeller): static
+    {
+        if (!$this->orderAsSeller->contains($orderAsSeller)) {
+            $this->orderAsSeller->add($orderAsSeller);
+            $orderAsSeller->setSeller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderAsSeller(Order $orderAsSeller): static
+    {
+        if ($this->orderAsSeller->removeElement($orderAsSeller)) {
+            // set the owning side to null (unless already changed)
+            if ($orderAsSeller->getSeller() === $this) {
+                $orderAsSeller->setSeller(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrdersAsBuyer(): Collection
+    {
+        return $this->ordersAsBuyer;
+    }
+
+    public function addOrdersAsBuyer(Order $ordersAsBuyer): static
+    {
+        if (!$this->ordersAsBuyer->contains($ordersAsBuyer)) {
+            $this->ordersAsBuyer->add($ordersAsBuyer);
+            $ordersAsBuyer->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrdersAsBuyer(Order $ordersAsBuyer): static
+    {
+        if ($this->ordersAsBuyer->removeElement($ordersAsBuyer)) {
+            // set the owning side to null (unless already changed)
+            if ($ordersAsBuyer->getBuyer() === $this) {
+                $ordersAsBuyer->setBuyer(null);
             }
         }
 
