@@ -71,6 +71,9 @@ class Book
     #[ORM\OneToOne(mappedBy: 'book', cascade: ['persist', 'remove'])]
     private ?Order $sale = null;
 
+    #[ORM\OneToOne(mappedBy: 'book', cascade: ['persist', 'remove'])]
+    private ?Anounce $anounce = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -157,6 +160,23 @@ class Book
         }
 
         $this->sale = $sale;
+
+        return $this;
+    }
+
+    public function getAnounce(): ?Anounce
+    {
+        return $this->anounce;
+    }
+
+    public function setAnounce(Anounce $anounce): static
+    {
+        // set the owning side of the relation if necessary
+        if ($anounce->getBook() !== $this) {
+            $anounce->setBook($this);
+        }
+
+        $this->anounce = $anounce;
 
         return $this;
     }
