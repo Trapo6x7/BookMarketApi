@@ -55,9 +55,7 @@ class Book
     #[Groups(['book:read', 'book:write'])]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['book:read', 'book:write'])]
-    private ?string $author = null;
+
 
     /**
      * @var Collection<int, Category>
@@ -73,6 +71,11 @@ class Book
 
     #[ORM\OneToOne(mappedBy: 'book', cascade: ['persist', 'remove'])]
     private ?Anounce $anounce = null;
+
+    #[ORM\ManyToOne(inversedBy: 'books')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['book:read', 'book:write'])]
+    private ?Author $author = null;
 
     public function __construct()
     {
@@ -92,18 +95,6 @@ class Book
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(string $author): static
-    {
-        $this->author = $author;
 
         return $this;
     }
@@ -177,6 +168,18 @@ class Book
         }
 
         $this->anounce = $anounce;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?Author
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?Author $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }
