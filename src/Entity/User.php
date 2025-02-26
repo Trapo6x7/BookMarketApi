@@ -8,6 +8,7 @@ use App\DataPersister\UserDataPersister;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -70,11 +71,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:write'])]
-    private ?string $companyName = null;
+    private ?string $companyAdress = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:write'])]
-    private ?string $companyAdress = null;
+      #[Groups(['user:write'])]
+    private ?string $companyName = null;
+
+
 
     public function __construct()
     {
@@ -222,18 +225,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCompanyName(): ?string
-    {
-        return $this->companyName;
-    }
-
-    public function setCompanyName(?string $companyName): static
-    {
-        $this->companyName = $companyName;
-
-        return $this;
-    }
-
     public function getCompanyAdress(): ?string
     {
         return $this->companyAdress;
@@ -246,5 +237,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-  
+    public function getCompanyName(): ?string
+    {
+        return $this->companyName;
+    }
+
+    public function setCompanyName(?string $companyName): static
+    {
+        $this->companyName = $companyName;
+
+        return $this;
+    }
+
+
 }
