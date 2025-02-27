@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             denormalizationContext: ['groups' => ['article:write']],
-            security: "is_granted('ROLE_USER')",
+            security: "is_granted('ROLE_WRITER')",
             processor: ArticleDataPersister::class,
             securityMessage: "Seuls les utilisateurs connectés peuvent créer des livres"
         ),

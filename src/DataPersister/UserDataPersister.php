@@ -21,9 +21,15 @@ class UserDataPersister implements ProcessorInterface
             if ($data->getPassword()) {
                 $hashedPassword = $this->passwordHasher->hashPassword($data, $data->getPassword());
                 $data->setPassword($hashedPassword);
+                if (in_array('ROLE_SELLER', $data->getRoles(), true)) {
+                    $data->setCompanyAdress($data->getCompanyAdress());
+                    $data->setCompanyName($data->getCompanyName());
+                } else {
+                    $data->setCompanyAdress(null);
+                    $data->setCompanyName(null);
+                }
             }
-            $data->setRoles(['ROLE_USER']);
-
+     
             $this->entityManager->persist($data);
             $this->entityManager->flush();
         }

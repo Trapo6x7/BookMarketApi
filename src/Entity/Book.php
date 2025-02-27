@@ -61,6 +61,7 @@ class Book
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'books')]
+    #[Groups(['book:read', 'book:write'])]
     private Collection $categories;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
