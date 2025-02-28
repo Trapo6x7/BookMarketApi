@@ -27,8 +27,12 @@ use App\State\Provider\MeProvider;
             processor: UserDataPersister::class
         ),
         new Get(
-            uriTemplate: '/me',
             normalizationContext: ['groups' => ['user:read']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new Get(
+            uriTemplate: '/me',
+            normalizationContext: ['groups' => ['me:read']],
             security: "is_granted('ROLE_USER')",
             provider: MeProvider::class
         )
@@ -42,21 +46,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $password = null;
 
     /**
@@ -66,23 +70,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $books;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $companyAdress = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-      #[Groups(['user:write'])]
+    #[Groups(['user:write'], ['user:read'], ['me:read'])]
     private ?string $companyName = null;
 
 
@@ -90,30 +94,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Anounce>
      */
     #[ORM\OneToMany(targetEntity: Anounce::class, mappedBy: 'seller', orphanRemoval: true)]
+    #[Groups(['user:read'], ['me:read'])]
     private Collection $anounces;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
+    #[Groups(['user:read'], ['me:read'])]
     private Collection $orders;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'seller', orphanRemoval: true)]
+    #[Groups(['user:read'], ['me:read'])]
     private Collection $orderAsSeller;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
+    #[Groups(['user:read'], ['me:read'])]
     private Collection $ordersAsBuyer;
 
     /**
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author', orphanRemoval: true)]
+    #[Groups(['user:read'], ['me:read'])]
     private Collection $articles;
 
 
