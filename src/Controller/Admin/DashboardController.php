@@ -2,6 +2,14 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Anounce;
+use App\Entity\Article;
+use App\Entity\Author;
+use App\Entity\Book;
+use App\Entity\Category;
+use App\Entity\Order;
+use App\Entity\OrderState;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -44,7 +52,15 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        yield MenuItem::section('BOOKMARKET');
+        yield MenuItem::linkToCrud('User', 'fas fa-venus-mars', User::class);
+        yield MenuItem::linkToCrud('Anounce', 'fas fa-briefcase', Anounce::class);
+        yield MenuItem::linkToCrud('Article', 'fas fa-ship', Article::class);
+        yield MenuItem::linkToCrud('Book', 'fas fa-user-tie', Book::class);
+        yield MenuItem::linkToCrud('Order', 'fas fa-user-tie', Order::class);
+        yield MenuItem::linkToCrud('OrderState', 'fas fa-user-tie', OrderState::class);;
+        yield MenuItem::linkToCrud('Category', 'fas fa-user-tie', Category::class);
+        yield MenuItem::linkToCrud('Author', 'fas fa-user-tie', Author::class);
+
     }
 }
