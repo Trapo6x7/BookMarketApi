@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Post;
 use App\DataPersister\UserDataPersister;
 use App\Repository\UserRepository;
@@ -13,6 +14,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use App\State\Provider\MeProvider;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -35,7 +37,17 @@ use App\State\Provider\MeProvider;
             normalizationContext: ['groups' => ['me:read']],
             security: "is_granted('ROLE_USER')",
             provider: MeProvider::class
-        )
+        ),
+        new Delete(
+            security: "is_granted('ROLE_USER') and object == user",
+            securityMessage: "Vous ne pouvez supprimer que votre propre compte",
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['user:write']],
+            security: "is_granted('USER_EDIT', object)",
+            securityMessage: "Vous ne pouvez modifier que vos propres nformations",
+            processor: UserDataPersister::class
+        ),
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -43,24 +55,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read','me:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $password = null;
 
     /**
@@ -70,23 +83,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $books;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $companyAdress = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:write'], ['user:read'], ['me:read'])]
+    #[Groups(['user:write','user:read','me:read'])]
     private ?string $companyName = null;
 
 
@@ -94,35 +107,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Anounce>
      */
     #[ORM\OneToMany(targetEntity: Anounce::class, mappedBy: 'seller', orphanRemoval: true)]
-    #[Groups(['user:read'], ['me:read'])]
+    #[Groups(['user:read', 'me:read'])]
     private Collection $anounces;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
-    #[Groups(['user:read'], ['me:read'])]
+    #[Groups(['user:read', 'me:read'])]
     private Collection $orders;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'seller', orphanRemoval: true)]
-    #[Groups(['user:read'], ['me:read'])]
+    #[Groups(['user:read', 'me:read'])]
     private Collection $orderAsSeller;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
-    #[Groups(['user:read'], ['me:read'])]
+    #[Groups(['user:read', 'me:read'])]
     private Collection $ordersAsBuyer;
 
     /**
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author', orphanRemoval: true)]
-    #[Groups(['user:read'], ['me:read'])]
+    #[Groups(['user:read', 'me:read'])]
     private Collection $articles;
 
 
