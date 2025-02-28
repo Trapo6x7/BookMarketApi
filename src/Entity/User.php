@@ -23,6 +23,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
             validationContext: ['groups' => ['Default']],
             security: "is_granted('PUBLIC_ACCESS')",
             processor: UserDataPersister::class
+        ),
+        new Get(
+            uriTemplate: '/me',
+            normalizationContext: ['groups' => ['user:read']],
+            security: "is_granted('ROLE_USER')",
+            provider: MeProvider::class
         )
     ]
 )]
