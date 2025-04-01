@@ -5,25 +5,23 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Delete;
-use App\DataPersister\BookDataPersister;
 use App\Repository\AuthorRepository;
-use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['author:read']]),
-        new GetCollection(normalizationContext: ['groups' => ['author:read']]),
-        new Post(denormalizationContext: ['groups' => ['author:write']]),
-        new Patch(denormalizationContext: ['groups' => ['author:write']]),
-        new Delete(),
+        new Get(
+            normalizationContext: ['groups' => ['author:read']],
+            security: "is_granted('PUBLIC_ACCESS')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['author:read']],
+            security: "is_granted('PUBLIC_ACCESS')"
+        ),
     ]
 )]
 class Author
@@ -35,7 +33,7 @@ class Author
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['author:read', 'author:write', 'book:read'])]
+    #[Groups(['author:read', 'author:write', 'book:read', 'anounce:read'])]
     private ?string $name = null;
 
     /**

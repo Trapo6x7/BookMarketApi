@@ -75,7 +75,7 @@ class Book
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['book:read', 'book:write'])]
+    #[Groups(['book:read', 'book:write', 'anounce:read'])]
     private ?Author $author = null;
 
     public function __construct()

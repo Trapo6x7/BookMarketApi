@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['anounce:read']],
+            denormalizationContext: ['groups' => ['anounce:write']],
             security: "is_granted('PUBLIC_ACCESS')"
         ),
         new GetCollection(
@@ -79,6 +80,7 @@ class Anounce
 
     #[ORM\ManyToOne(inversedBy: 'anounces')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['anounce:read', 'anounce:write'])]
     private ?User $seller = null;
 
 
