@@ -57,26 +57,26 @@ class Order
 
     #[ORM\OneToOne(inversedBy: 'sale', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'me:read'])]
     private ?Book $book = null;
 
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'me:read'])]
     private ?\DateTimeImmutable $purchaseAt = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'orderAsSeller')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'me:read'])]
     private ?User $seller = null;
 
     #[ORM\ManyToOne(inversedBy: 'ordersAsBuyer')]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'me:read'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $buyer = null;
 
     #[ORM\ManyToOne(inversedBy: 'sells')]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'me:read'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?OrderState $orderState = null;
 

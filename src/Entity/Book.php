@@ -52,7 +52,7 @@ class Book
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['book:read', 'book:write'])]
+    #[Groups(['book:read', 'book:write', 'me:read'])]
     private ?string $title = null;
 
 
@@ -75,7 +75,7 @@ class Book
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['book:read', 'book:write', 'anounce:read'])]
+    #[Groups(['book:read', 'book:write', 'anounce:read', 'me:read'])]
     private ?Author $author = null;
 
     public function __construct()

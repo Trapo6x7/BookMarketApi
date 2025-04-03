@@ -37,7 +37,7 @@ class OrderState
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['order_state:read'])]
+    #[Groups(['order_state:read', 'me:read'])]
     private ?string $state = null;
 
     /**

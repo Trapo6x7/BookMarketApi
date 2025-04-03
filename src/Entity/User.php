@@ -124,13 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'me:read'])]
     private Collection $orderAsSeller;
 
-    /**
-     * @var Collection<int, Order>
-     */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', orphanRemoval: true)]
-    #[Groups(['user:read', 'me:read'])]
-    private Collection $ordersAsBuyer;
-
+ 
     /**
      * @var Collection<int, Article>
      */
@@ -146,7 +140,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->anounces = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->orderAsSeller = new ArrayCollection();
-        $this->ordersAsBuyer = new ArrayCollection();
         $this->articles = new ArrayCollection();
     }
 
@@ -401,36 +394,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($orderAsSeller->getSeller() === $this) {
                 $orderAsSeller->setSeller(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getOrdersAsBuyer(): Collection
-    {
-        return $this->ordersAsBuyer;
-    }
-
-    public function addOrdersAsBuyer(Order $ordersAsBuyer): static
-    {
-        if (!$this->ordersAsBuyer->contains($ordersAsBuyer)) {
-            $this->ordersAsBuyer->add($ordersAsBuyer);
-            $ordersAsBuyer->setBuyer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrdersAsBuyer(Order $ordersAsBuyer): static
-    {
-        if ($this->ordersAsBuyer->removeElement($ordersAsBuyer)) {
-            // set the owning side to null (unless already changed)
-            if ($ordersAsBuyer->getBuyer() === $this) {
-                $ordersAsBuyer->setBuyer(null);
             }
         }
 

@@ -53,24 +53,24 @@ class Anounce
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['anounce:read'])]
+    #[Groups(['anounce:read',  'me:read'])]
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'anounce', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['anounce:read', 'anounce:write'])]
+    #[Groups(['anounce:read', 'anounce:write', 'me:read'])]
     private ?Book $book = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['anounce:read', 'anounce:write'])]
+    #[Groups(['anounce:read', 'anounce:write', 'me:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(['anounce:read', 'anounce:write'])]
+    #[Groups(['anounce:read', 'anounce:write', 'me:read'])]
     private ?int $price = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['anounce:read', 'anounce:write'])]
+    #[Groups(['anounce:read', 'anounce:write', 'me:read'])]
     private ?string $imageUrl = null;
 
     #[ORM\ManyToOne(inversedBy: 'anounces')]
