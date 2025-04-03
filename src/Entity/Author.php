@@ -52,12 +52,12 @@ class Author
         return $this->id;
     }
 
-    public function getAuthor(): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setAuthor(string $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
 

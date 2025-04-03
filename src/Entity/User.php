@@ -92,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:write','user:read','me:read'])]
-    private ?string $username = null;
+    private ?string $pseudo = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:write','user:read','me:read'])]
@@ -279,14 +279,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getPseudo(): ?string
     {
-        return $this->username;
+        return $this->pseudo;
     }
 
-    public function setUsername(string $username): static
+    public function setPseudo(string $pseudo): static
     {
-        $this->username = $username;
+        $this->pseudo = $pseudo;
 
         return $this;
     }
