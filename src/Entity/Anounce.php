@@ -13,6 +13,7 @@ use App\DataPersister\BookDataPersister;
 use App\Repository\AnounceRepository;
 use App\Repository\BookRepository;
 use App\Repository\OrderRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -53,7 +54,7 @@ class Anounce
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['anounce:read',  'me:read'])]
+    #[Groups(['anounce:read', 'me:read'])]
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'anounce', cascade: ['persist', 'remove'])]
@@ -83,6 +84,14 @@ class Anounce
     #[Groups(['anounce:read', 'anounce:write'])]
     private ?User $seller = null;
 
+    #[ORM\Column]
+    #[Groups(['anounce:read', 'anounce:write', 'me:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct(DateTimeImmutable $createdAt= new \DateTimeImmutable())
+    {
+        $this->createdAt = $createdAt;
+    }
 
     public function getId(): ?int
     {
@@ -157,6 +166,18 @@ class Anounce
     public function setSeller(?User $seller): static
     {
         $this->seller = $seller;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
